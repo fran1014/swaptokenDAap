@@ -90,13 +90,35 @@ export const PROVIDER = ({ children }) => {
         liquidity = JSBI.BigInt(liquidity.toString());
         sqrtPriceX96 = JSBI.BigInt(sqrtPriceX96.toString());
 
+        console.log("CALLAING_POOL---------")
         return new Pool(token0, token1, feeAmount, sqrtPriceX96, liquidity, tick, [
-            index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]),
+            {
+                index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]),
+                liquidityNet: liquidity,
+                liquidityGroos: liquidity,
+            },
+            {
+                index: nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount]),
+                liquidityNet: JSBI.multiply(liquidity, JSBI.BigInt("-1")),
+                liquidityGroos: liquidity,
+            },
+          
             
         ])
 
 
     }
+
+    //SWAP_OPTION FUNCTION INTERNAL
+    function swapOptions(options){
+        return Object.assign({
+            slippageTolerance: new Percent(5,1000),
+            recipient:RECIPIENT,
+        },
+        options)
+    }
+    
+ 
 };
 
 
